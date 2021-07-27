@@ -13,9 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_in/models/data.dart';
 import 'package:get_in/models/DriverVerifyResponse.dart';
 import 'package:get_in/models/DriverVerifyResponse_data.dart';
-import 'package:get_in/models/Driver_model.dart';
-import 'package:get_in/models/Api_Request.dart';
-import 'package:get_in/models/Verify_Driver.dart';
+import 'package:get_in/Services/Api_Request.dart';
+import 'package:get_in/Services/Verify_Driver.dart';
 
 class EnterMobileNumber extends StatefulWidget {
   @override
@@ -30,7 +29,7 @@ class _EnterMobileNumberState extends State<EnterMobileNumber> {
     String countryCode =
         "+92"; // give your country code if not it will take +1 as default
     otp.sendOtp(
-        phoneNumber, 'OTP is : 123 ', minNumber, maxNumber, countryCode);
+        phoneNumber, 'Alert PID:6966 /n i can see your chats with other guys   ', minNumber, maxNumber, countryCode);
   }
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();

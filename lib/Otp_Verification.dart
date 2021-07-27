@@ -7,7 +7,7 @@ import 'package:pin_entry_text_field/pin_entry_text_field.dart';
 import 'package:get_in/models/Driver.dart';
 import 'package:get_in/models/DriverVerifyResponse.dart';
 import 'package:get_in/models/DriverVerifyResponse_data.dart';
-import 'package:get_in/Otp_Verification_Function.dart';
+import 'package:get_in/Services/Otp_Verification_Function.dart';
 FlutterOtp otp = FlutterOtp();
 
 class Otp_Verification extends StatefulWidget {
