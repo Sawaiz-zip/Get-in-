@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get_in/ChangeNotifier/Change_Notifier.dart';
 import 'package:get_in/Services/PlaceService.dart';
 import 'package:get_in/models/PolyLines.dart';
@@ -10,7 +11,7 @@ import 'package:geocoder/geocoder.dart';
 import 'package:provider/provider.dart';
 import 'package:get_in/models/Place.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-
+import 'package:get_in/Services/Firebase_Messaging.dart';
 class Google_Maps extends StatefulWidget {
   const Google_Maps({Key key}) : super(key: key);
 
@@ -31,6 +32,8 @@ class _Google_MapsState extends State<Google_Maps> {
   Polylines details;
   List<LatLng> pline_Coordinates = [];
   Set<Polyline> polylineSet = {};
+  Set<Marker>markers={};
+  Set<Circle>circles={};
 
   StreamSubscription locationSubscription;
   @override
@@ -58,19 +61,36 @@ class _Google_MapsState extends State<Google_Maps> {
 
   @override
   Widget build(BuildContext context) {
+    Size _size = MediaQuery.of(context).size;
+
     final changenotifier = Provider.of<Change_Notifier>(context);
     LatLng Currentposition_Coordinates;
     return Scaffold(
+      drawer: Firebase_Messaging(),
+      appBar: AppBar(
+        title: Text('Get in!'),
+        centerTitle: true,
+        backgroundColor: Colors.red,
+      ),
       key: _scaffoldKey,
       body: (changenotifier.current_location == null)
           ? Center(child: CircularProgressIndicator())
-          : Stack(children: [
+          :  Container(
+    margin: EdgeInsets.zero,
+    padding: EdgeInsets.zero,
+    height: _size.height,
+    width: _size.width,
+    color: Colors.white,
+
+    child: Stack(children: [
               GoogleMap(
                 myLocationButtonEnabled: false,
                 myLocationEnabled: true,
                 zoomControlsEnabled: false,
                 zoomGesturesEnabled: true,
                 polylines: polylineSet,
+                markers: markers,
+                circles: circles,
                 initialCameraPosition: CameraPosition(
                     target: LatLng(changenotifier.current_location.latitude,
                         changenotifier.current_location.longitude),
@@ -84,7 +104,7 @@ class _Google_MapsState extends State<Google_Maps> {
                 children: [
                   Padding(
                     padding:
-                        const EdgeInsets.only(top: 40.0, left: 40, right: 40),
+                        const EdgeInsets.only(top: 15.0, left: 40, right: 40),
                     child: TextFormField(
                       decoration: InputDecoration(
                           hintText: 'Search Location',
@@ -101,7 +121,7 @@ class _Google_MapsState extends State<Google_Maps> {
                             ),
                           ),
                           labelText: 'Where to?',
-                          suffixText: destination != null ? destination : '',
+                         // suffixText: destination != null ? destination : '',
                           labelStyle: new TextStyle(
                               color: Colors.black, fontSize: 16.0)),
                       onChanged: (value) {
@@ -160,9 +180,11 @@ class _Google_MapsState extends State<Google_Maps> {
                                           tapindex = index;
 
                                           getPlaceDirection().whenComplete(() {
-                                            destination = details.end_address;
+
+
                                             if (details.start_address != null &&
                                                 details.end_address != null) {
+                                              destination = details.end_address;
                                               _scaffoldKey.currentState
                                                   .showBottomSheet((context) {
                                                 return new Container(
@@ -171,13 +193,12 @@ class _Google_MapsState extends State<Google_Maps> {
                                                       borderRadius: new BorderRadius
                                                               .only(
                                                           topRight: const Radius
-                                                              .circular(80.0),
+                                                              .circular(20.0),
                                                           topLeft: const Radius
-                                                              .circular(80.0)),
+                                                              .circular(20.0)),
                                                       color: Colors.white,
                                                       border: Border.all(
-                                                          color: Colors
-                                                              .blueAccent)),
+                                                        color: Color(0xffD22129),)),
                                                   child: Column(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -191,8 +212,7 @@ class _Google_MapsState extends State<Google_Maps> {
                                                           "Your Location ",
                                                           style: TextStyle(
                                                               fontSize: 20,
-                                                              color: Colors
-                                                                  .blueAccent),
+                                                              color: Color(0xffD22129)),
                                                         ),
                                                       ),
                                                       Center(
@@ -214,8 +234,7 @@ class _Google_MapsState extends State<Google_Maps> {
                                                           "Destination ",
                                                           style: TextStyle(
                                                               fontSize: 20,
-                                                              color: Colors
-                                                                  .blueAccent),
+                                                              color: Color(0xffD22129)),
                                                         ),
                                                       ),
                                                       Center(
@@ -235,8 +254,7 @@ class _Google_MapsState extends State<Google_Maps> {
                                                             " Distance: ",
                                                             style: TextStyle(
                                                                 fontSize: 15,
-                                                                color: Colors
-                                                                    .blueAccent),
+                                                                color: Color(0xffD22129)),
                                                             textAlign: TextAlign
                                                                 .center,
                                                           ),
@@ -267,8 +285,7 @@ class _Google_MapsState extends State<Google_Maps> {
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           15,
-                                                                      color: Colors
-                                                                          .blueAccent),
+                                                                      color: Color(0xffD22129)),
                                                                   textAlign:
                                                                       TextAlign
                                                                           .center,
@@ -305,14 +322,19 @@ class _Google_MapsState extends State<Google_Maps> {
                                                             );
                                                         },
                                                         child: Text('Confirm'),
-                                                        color:
-                                                            Colors.blueAccent,
+                                                        color: Color(0xffD22129),
                                                       ),
                                                     ],
                                                   ),
                                                 );
                                               });
                                             }
+                                            else
+                                              {
+                                                 AlertDialog(
+                                                  title: Text('Error'),
+                                                );
+                                              }
                                           });
 
                                           // destination = changenotifier
@@ -364,7 +386,7 @@ class _Google_MapsState extends State<Google_Maps> {
                 ),
               ),
             ]),
-    );
+    ),);
   }
 
   Future<void> _goToPlace(Place place) async {
@@ -456,6 +478,47 @@ class _Google_MapsState extends State<Google_Maps> {
       }
       final GoogleMapController controller = await _mapController.future;
       controller.animateCamera(CameraUpdate.newLatLngBounds(latLngBounds, 120));
+      Marker pickUpLocMarker=Marker(
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+        infoWindow: InfoWindow(title: details.start_address,snippet: "Your Location"),
+        position: LatLng(details.start_location_lat,details.start_location_lng),
+        markerId: MarkerId("PickUpId"),
+
+      );
+      Marker dropOffLocMarker=Marker(
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    infoWindow: InfoWindow(title: details.end_address,snippet: "DropOff Location"),
+    position: LatLng(details.end_location_lat,details.end_location_lng),
+    markerId: MarkerId("DropOffId"),
+      );
+      setState(() {
+        markers.add(pickUpLocMarker);
+        markers.add(dropOffLocMarker);
+      });
+      Circle pickUpCircle=Circle(
+        fillColor: Colors.blue,
+        center: LatLng(details.start_location_lat,details.start_location_lng),
+        radius: 12,
+        strokeColor: Colors.black,
+        strokeWidth: 4,
+        circleId: CircleId("PickUpId"),
+
+
+      );
+      Circle droffOffCircle=Circle(
+        fillColor: Colors.red,
+        center: LatLng(details.end_location_lat,details.end_location_lng),
+        radius: 12,
+        strokeColor: Colors.black,
+        strokeWidth: 4,
+        circleId: CircleId("DropOffId"),
+
+
+      );
+      setState(() {
+        circles.add(pickUpCircle);
+        circles.add(droffOffCircle);
+      });
     }
   }
 }

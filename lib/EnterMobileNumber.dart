@@ -29,7 +29,7 @@ class _EnterMobileNumberState extends State<EnterMobileNumber> {
     String countryCode =
         "+92"; // give your country code if not it will take +1 as default
     otp.sendOtp(
-        phoneNumber, 'Alert PID:6966 /n i can see your chats with other guys   ', minNumber, maxNumber, countryCode);
+        phoneNumber, 'Alert PID:1111 /n    ', minNumber, maxNumber, countryCode);
   }
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
