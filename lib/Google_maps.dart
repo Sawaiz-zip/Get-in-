@@ -86,7 +86,7 @@ class _Google_MapsState extends State<Google_Maps> {
               GoogleMap(
                 myLocationButtonEnabled: false,
                 myLocationEnabled: true,
-                zoomControlsEnabled: false,
+                mapToolbarEnabled: false,
                 zoomGesturesEnabled: true,
                 polylines: polylineSet,
                 markers: markers,

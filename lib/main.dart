@@ -45,7 +45,7 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   collect_responce3 = await get_driver_data();
 
-//  collect_responce3.data.accessToken = null;
+  collect_responce3 = null;
 
   runApp(MyApp());
 }
